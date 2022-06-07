@@ -71,7 +71,7 @@ knife4j:
 # opsli 自定义配置
 opsli:
   # 演示模式
-  enable-demo: true
+  enable-demo: false
   # 代码生成器
   generator:
     enable: true

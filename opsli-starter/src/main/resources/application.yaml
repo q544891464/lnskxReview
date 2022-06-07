@@ -135,7 +135,7 @@ mybatis-plus:
 # OPSLI 自定义配置
 opsli:
   # 系统名称
-  system-name: "OPSLI 快速开发平台"
+  system-name: "OPSLI 系统"
   # 系统启动时间 为空则默认 真实当前系统启动时间
   system-starter-time: "2020-09-10 00:00:00"
 
