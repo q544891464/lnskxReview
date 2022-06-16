@@ -15,13 +15,16 @@
  */
 package org.opsli.modulars.system.apply.web;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.convert.Convert;
+import com.alibaba.excel.util.CollectionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.opsli.api.wrapper.system.user.UserModel;
 import org.opsli.common.annotation.RequiresPermissionsCus;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.opsli.api.base.result.ResultVo;
@@ -35,12 +38,23 @@ import org.opsli.core.persistence.querybuilder.QueryBuilder;
 import org.opsli.core.persistence.querybuilder.WebQueryBuilder;
 import org.opsli.core.utils.UserTokenUtil;
 import org.opsli.core.utils.UserUtil;
+import org.opsli.modulars.system.SystemMsg;
+import org.opsli.modulars.system.user.entity.SysUser;
 import org.opsli.modulars.system.user.service.IUserOrgRefService;
+import org.opsli.plugins.oss.OssStorageFactory;
+import org.opsli.plugins.oss.service.BaseOssStorageService;
+import org.opsli.plugins.oss.service.OssStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 import org.opsli.modulars.system.apply.entity.SysApply;
 import org.opsli.api.wrapper.system.apply.SysApplyModel;
@@ -59,6 +73,7 @@ import org.opsli.api.web.system.apply.SysApplyRestApi;
 public class SysApplyRestController extends BaseRestController<SysApply, SysApplyModel, ISysApplyService>
     implements SysApplyRestApi {
 
+//    private static final UUID UUID = UUID.randomUUID();
     @Autowired
     IUserOrgRefService userOrgRefService;
 
@@ -97,8 +112,11 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
         Page<SysApply, SysApplyModel> page = new Page<>(pageNo, pageSize);
         QueryWrapper<SysApply> queryWrapper = queryBuilder.build();
+//        查找除is_pass以外的column
+        queryWrapper.select(SysApply.class,info ->  !info.getColumn().equals("is_pass"));
 //        只返回当前用户为申请者的申请表
         queryWrapper.eq("applicant_id",CurrentUserId);
+
         page.setQueryWrapper(queryWrapper);
         page = IService.findPage(page);
 
@@ -133,6 +151,29 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
     }
 
     /**
+     * 申请表 根据是否通过查询分页 只有管理员才能查看
+     * @param pageNo 当前页
+     * @param pageSize 每页条数
+     * @param request request
+     * @return ResultVo
+     */
+    @ApiOperation(value = "获得分页数据", notes = "获得分页数据 - 查询构造器")
+    @RequiresPermissions("system_apply_select")
+    @Override
+    public ResultVo<?> findPageByIsPassed(Integer pageNo, Integer pageSize, HttpServletRequest request) {
+
+//        返回is_passed为true的申请表
+        QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
+        Page<SysApply, SysApplyModel> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<SysApply> queryWrapper = queryBuilder.build();
+        queryWrapper.eq("is_pass",1);
+        page.setQueryWrapper(queryWrapper);
+        page = IService.findPage(page);
+
+        return ResultVo.success(page.getPageData());
+    }
+
+    /**
     * 申请表 新增
     * @param model 模型
     * @return ResultVo
@@ -142,6 +183,9 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
     @EnableLog
     @Override
     public ResultVo<?> insert(SysApplyModel model) {
+
+        model.setUid(UUID.randomUUID().toString());
+
         String CurrentUserId = UserTokenUtil.getUserIdByToken();
 
         //设置申请人ID
@@ -153,7 +197,8 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         model.setOrgId(orgId);
         // 调用新增方法
         IService.insert(model);
-        return ResultVo.success("新增申请表成功");
+        String s = model.getUid();
+        return ResultVo.success("添加申请表成功").setData(s);
     }
 
     /**
@@ -203,6 +248,77 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
     }
 
     /**
+     * 申请表 设置奖项
+     * @return ResultVo
+     */
+    @Override
+    public ResultVo<?> setPrize(String applyId, String prize) {
+        boolean SetPrizeStatus = IService.SetPrize(applyId,prize);
+        if(!SetPrizeStatus){
+            return ResultVo.error("设置奖项失败");
+        }
+        return ResultVo.success();
+    }
+
+    /**
+     * 上传文件
+     * @param request 文件流 request
+     * @return ResultVo
+     */
+    @ApiOperation(value = "上传文件", notes = "上传文件")
+    @Override
+    public ResultVo<?> uploadFile(MultipartHttpServletRequest request) {
+        Iterator<String> itr = request.getFileNames();
+        String uploadedFile = itr.next();
+        List<MultipartFile> files = request.getFiles(uploadedFile);
+        System.out.println("files:"+files);
+        if (CollectionUtils.isEmpty(files)) {
+            // 请选择文件
+            return ResultVo.error(SystemMsg.EXCEPTION_USER_FILE_NULL.getCode(),
+                    SystemMsg.EXCEPTION_USER_FILE_NULL.getMessage());
+        }
+
+        try {
+            MultipartFile multipartFile = files.get(0);
+            Resource resource = multipartFile.getResource();
+//            String filename = resource.getFilename();
+            String filename = "pdf";
+
+
+            System.out.println("filename:"+filename);
+
+
+            // 调用OSS 服务保存文件
+            OssStorageService ossStorageService = OssStorageFactory.INSTANCE.getHandle();
+            BaseOssStorageService.FileAttr fileAttr = ossStorageService.upload(
+                    multipartFile.getInputStream(), "pdf");
+
+            String storagePath = fileAttr.getFileStoragePath();
+
+//            UpdateWrapper<SysApply> updateWrapper = new UpdateWrapper<>();
+//            updateWrapper.set("file_path",storagePath);
+//            IService.update(updateWrapper);
+            return ResultVo.success("上传成功").setData(storagePath);
+
+
+
+//            UserModel user = UserUtil.getUserBySource();
+            // 更新头像至数据库
+//            UserModel userModel = new UserModel();
+//            userModel.setId(user.getId());
+//            userModel.setAvatar(fileAttr.getFileStoragePath());
+//            IService.updateAvatar(userModel);
+//            // 刷新用户信息
+//            UserUtil.refreshUser(user);
+        }catch (IOException e){
+            log.error(e.getMessage(), e);
+            return ResultVo.error("上传文件失败，请稍后再试");
+        }
+
+
+    }
+
+    /**
     * 申请表 批量删除
     * @param ids ID 数组
     * @return ResultVo
@@ -242,6 +358,39 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
         super.excelExport(SysApplyRestApi.SUB_TITLE, queryBuilder.build(), response, method);
     }
+
+    @Override
+    public void exportExcelById(HttpServletRequest request, HttpServletResponse response) {
+        //获取当前用户ID
+        String CurrentUserId = UserTokenUtil.getUserIdByToken();
+        // 当前方法
+        Method method = ReflectUtil.getMethodByName(this.getClass(), "exportExcelById");
+        QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
+        super.excelExport(SysApplyRestApi.SUB_TITLE, queryBuilder.build().eq("applicant_id",CurrentUserId), response, method);
+    }
+
+    @Override
+    public void exportExcelByOrg(HttpServletRequest request, HttpServletResponse response) {
+        //获取当前用户ID
+        String CurrentUserId = UserTokenUtil.getUserIdByToken();
+        String orgId = userOrgRefService.getDefOrgId(CurrentUserId);
+        // 当前方法
+        Method method = ReflectUtil.getMethodByName(this.getClass(), "exportExcelByOrg");
+        QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
+        super.excelExport(SysApplyRestApi.SUB_TITLE, queryBuilder.build().eq("org_id",orgId), response, method);
+
+
+    }
+
+    @Override
+    public void exportExcelByIsPass(HttpServletRequest request, HttpServletResponse response) {
+//is_pass 1
+        // 当前方法
+        Method method = ReflectUtil.getMethodByName(this.getClass(), "exportExcelByOrg");
+        QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
+        super.excelExport(SysApplyRestApi.SUB_TITLE, queryBuilder.build().eq("is_pass",1), response, method);
+    }
+
 
     /**
     * 申请表 Excel 导入

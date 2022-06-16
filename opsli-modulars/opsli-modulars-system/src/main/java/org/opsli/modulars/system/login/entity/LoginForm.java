@@ -42,7 +42,8 @@ public class LoginForm extends BaseEncrypt {
 
     /** 密码 */
     @ApiModelProperty(value = "密码")
-    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_SECURITY_PASSWORD})
+//    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_SECURITY_PASSWORD}) 密码验证方式修改
+    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_GENERAL})
     @ValidatorLenMin(6)
     private String password;
 

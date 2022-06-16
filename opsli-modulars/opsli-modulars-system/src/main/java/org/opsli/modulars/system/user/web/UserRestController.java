@@ -220,6 +220,8 @@ public class UserRestController extends BaseRestController<SysUser, UserModel, I
             MultipartFile multipartFile = files.get(0);
             Resource resource = multipartFile.getResource();
             String filename = resource.getFilename();
+            System.out.println("filename:"+filename);
+
 
             // 调用OSS 服务保存头像
             OssStorageService ossStorageService = OssStorageFactory.INSTANCE.getHandle();

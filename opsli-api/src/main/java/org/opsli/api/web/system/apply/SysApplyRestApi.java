@@ -81,6 +81,21 @@ public interface SysApplyRestApi {
             HttpServletRequest request
     );
 
+
+    /**
+     * 申请表 查询分页 通过is_pass状态获得分页
+     * @param pageNo 当前页
+     * @param pageSize 每页条数
+     * @param request request
+     * @return ResultVo
+     */
+    @GetMapping("/findPageByIsPassed")
+    ResultVo<?> findPageByIsPassed(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            HttpServletRequest request
+    );
+
     /**
     * 申请表 新增
     * @param model 模型
@@ -123,6 +138,24 @@ public interface SysApplyRestApi {
     ResultVo<?> isPassApply(String applyId, String isPass);
 
     /**
+     * 申请表 设置奖项
+     * @param applyId 申请ID
+     * @param prize 奖项
+     * @return ResultVo
+     */
+    @PostMapping("/setPrize")
+    ResultVo<?> setPrize(String applyId, String prize);
+
+
+    /**
+     * 申请表 上传pdf文件
+
+     * @return ResultVo
+     */
+    @PostMapping("/uploadFile")
+    ResultVo<?> uploadFile(MultipartHttpServletRequest request);
+
+    /**
     * 申请表 Excel 导出
     *
     * 导出时，Token认证和方法权限认证 全部都由自定义完成
@@ -137,6 +170,15 @@ public interface SysApplyRestApi {
     */
     @GetMapping("/exportExcel")
     void exportExcel(HttpServletRequest request, HttpServletResponse response);
+
+    @GetMapping("/exportExcelById")
+    void exportExcelById(HttpServletRequest request, HttpServletResponse response);
+
+    @GetMapping("/exportExcelByOrg")
+    void exportExcelByOrg(HttpServletRequest request, HttpServletResponse response);
+
+    @GetMapping("/exportExcelByIsPass")
+    void exportExcelByIsPass(HttpServletRequest request, HttpServletResponse response);
 
     /**
     * 申请表 Excel 导入

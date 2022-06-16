@@ -55,6 +55,7 @@ import org.opsli.core.utils.UserUtil;
 import org.opsli.plugins.excel.exception.ExcelPluginException;
 import org.opsli.plugins.excel.listener.BatchExcelListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -103,6 +104,7 @@ public abstract class BaseRestController <T extends BaseEntity, E extends ApiWra
         Iterator<String> itr = request.getFileNames();
         String uploadedFile = itr.next();
         List<MultipartFile> files = request.getFiles(uploadedFile);
+
         if (CollectionUtils.isEmpty(files)) {
             // 请选择文件
             return ResultVo.error(CoreMsg.EXCEL_FILE_NULL.getCode(),

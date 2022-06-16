@@ -99,6 +99,11 @@ public enum SystemMsg implements BaseMsg {
     EXCEPTION_AREA_UNIQUE(20600,"地域编号重复，已存在"),
 
     /**
+     * 专业
+     */
+    EXCEPTION_DISCIPLINE_UNIQUE(20601,"专业编号重复，已存在"),
+
+    /**
      * 系统参数
      */
     EXCEPTION_OPTIONS_UNIQUE(20700,"参数编号重复，该角色已存在"),

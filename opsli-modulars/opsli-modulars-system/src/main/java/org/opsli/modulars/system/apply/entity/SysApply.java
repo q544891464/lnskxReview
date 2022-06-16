@@ -17,6 +17,8 @@ package org.opsli.modulars.system.apply.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -34,6 +36,8 @@ import org.opsli.core.base.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = false)
 public class SysApply extends BaseEntity {
 
+    /** 申请项目uid */
+    private String uid;
 
     /** 申请项目名称 */
     private String applyName;
@@ -49,6 +53,15 @@ public class SysApply extends BaseEntity {
 
     /** 主要完成人 */
     private String mainAuthors;
+
+    /** 成果类别 */
+    private String applyType;
+
+    /** 发表日期 */
+    private String publicationDate;
+
+    /** 学科专业 */
+    private String discipline;
 
     /** 关键词 */
     private String keywords;
@@ -67,6 +80,12 @@ public class SysApply extends BaseEntity {
 
     /** 成果应用情况 */
     private String application;
+
+    /** 文件存储地址 */
+    private String filePath;
+
+    /** 奖项 */
+    private String prize;
 
     // ========================================
 

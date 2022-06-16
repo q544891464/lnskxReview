@@ -63,4 +63,21 @@ public class SysApplyServiceImpl extends CrudServiceImpl<SysApplyMapper, SysAppl
         return true;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean SetPrize(String applyId, String prize) {
+        SysApplyModel model = this.get(applyId);
+
+        if(model == null){
+            return false;
+        }
+
+        UpdateWrapper<SysApply> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("prize", prize)
+                .eq(
+                        FieldUtil.humpToUnderline(MyBatisConstants.FIELD_ID), applyId);
+        this.update(updateWrapper);
+        return true;
+    }
+
 }

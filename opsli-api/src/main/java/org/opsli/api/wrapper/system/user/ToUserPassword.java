@@ -46,7 +46,8 @@ public class ToUserPassword implements Serializable {
 
     /** 新密码 */
     @ApiModelProperty(value = "新密码")
-    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_SECURITY_PASSWORD})
+//    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_SECURITY_PASSWORD}) 密码验证方式修改
+    @Validator({ValidatorType.IS_NOT_NULL, ValidatorType.IS_GENERAL})
     @ValidatorLenMin(6)
     @ValidatorLenMax(50)
     private String newPassword;

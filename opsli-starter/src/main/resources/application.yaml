@@ -164,7 +164,7 @@ opsli:
     super-admin: system
     # 重置默认密码 密码至少包含大小写字母，数字，且不少于6位
     # 优先使用 option 缓存， 如果缓存为空则使用配置文件
-    default-pass: Aa123456
+    default-pass: 123456
     # Token
     token:
       # 默认加密盐值（每个系统需要不一致防止被破解）
@@ -174,6 +174,7 @@ opsli:
       # 排除过滤URL
       url-exclusion:
         - "/static/files/**"
+        - "/files/**"
         - "/test.html"
 
     # 登录设置

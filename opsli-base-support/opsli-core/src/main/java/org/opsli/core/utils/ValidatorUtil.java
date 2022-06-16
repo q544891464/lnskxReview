@@ -374,14 +374,18 @@ public final class ValidatorUtil {
                         break;
                     }
                     // 安全密码
+//                    case IS_SECURITY_PASSWORD: {
                     case IS_SECURITY_PASSWORD: {
+
                         if (StringUtils.isEmpty(value)) {
                             break;
                         }
                         verifyRet = Validator.isMatchRegex(
                                 DefPatternPool.SECURITY_PASSWORD, value);
                         if (!verifyRet) {
-                            ValidatorMsg msg = ValidatorMsg.EXCEPTION_IS_SECURITY_PASSWORD;
+                            ValidatorMsg msg = ValidatorMsg.EXCEPTION_IS_SECURITY_PASSWORD; //将密码验证修改为常规验证
+//                            ValidatorMsg msg = ValidatorMsg.EXCEPTION_IS_GENERAL;
+
                             msg.setFieldName(fieldName);
                             throw new ServiceException(msg);
                         }

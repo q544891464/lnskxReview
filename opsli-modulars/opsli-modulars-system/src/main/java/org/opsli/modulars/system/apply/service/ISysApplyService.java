@@ -30,11 +30,20 @@ import org.opsli.api.wrapper.system.apply.SysApplyModel;
 public interface ISysApplyService extends CrudServiceInterface<SysApply, SysApplyModel> {
 
     /**
-     * 变更租户状态
+     * 变更通过状态
      *
      * @param applyId 申请ID
      * @param isPass 通过状态
      * @return boolean
      */
     boolean IsPassApply(String applyId, String isPass);
+
+    /**
+     * 变更奖项
+     *
+     * @param applyId 申请ID
+     * @param prize 通过状态
+     * @return boolean
+     */
+    boolean SetPrize(String applyId, String prize);
 }

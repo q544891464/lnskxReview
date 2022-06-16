@@ -2,8 +2,8 @@
 echo "Git Pushing ......"
 echo ""
 
-git push "git@github.com:hiparker/opsli-boot.git" development
-git push -f "git@gitee.com:hiparker/opsli-boot.git" development
+git push "git@github.com:q544891464/lnskxReview.git" development
+git push -f "git@github.com:q544891464/lnskxReview.git" development
 
 
 
