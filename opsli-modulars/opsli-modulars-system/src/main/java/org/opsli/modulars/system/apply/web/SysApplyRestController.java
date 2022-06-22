@@ -41,6 +41,7 @@ import org.opsli.core.utils.UserUtil;
 import org.opsli.modulars.system.SystemMsg;
 import org.opsli.modulars.system.user.entity.SysUser;
 import org.opsli.modulars.system.user.service.IUserOrgRefService;
+import org.opsli.modulars.tools.word.WordUtil;
 import org.opsli.plugins.oss.OssStorageFactory;
 import org.opsli.plugins.oss.service.BaseOssStorageService;
 import org.opsli.plugins.oss.service.OssStorageService;
@@ -195,6 +196,15 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         String orgId = userOrgRefService.getDefOrgId(CurrentUserId);
 
         model.setOrgId(orgId);
+
+//        自动导出word存储并存储word路径
+        try{
+            String wordPath = WordUtil.createApplyWord(model);
+            model.setWordPath(wordPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // 调用新增方法
         IService.insert(model);
         String s = model.getUid();
@@ -211,6 +221,13 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
     @EnableLog
     @Override
     public ResultVo<?> update(SysApplyModel model) {
+        //        自动导出word存储并存储word路径
+        try{
+            String wordPath = WordUtil.createApplyWord(model);
+            model.setWordPath(wordPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // 调用修改方法
         IService.update(model);
         return ResultVo.success("修改申请表成功");
@@ -316,6 +333,16 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         }
 
 
+    }
+
+    @Override
+    public ResultVo<?> uploadOtherFile(MultipartHttpServletRequest request) {
+        return null;
+    }
+
+    @Override
+    public ResultVo<?> uploadCompletedFile(MultipartHttpServletRequest request) {
+        return null;
     }
 
     /**

@@ -26,6 +26,7 @@ import org.opsli.api.wrapper.system.menu.MenuModel;
 import org.opsli.api.wrapper.system.options.OptionsModel;
 import org.opsli.api.wrapper.system.tenant.TenantModel;
 import org.opsli.api.wrapper.system.user.UserModel;
+import org.opsli.api.wrapper.system.user.UserRoleRefModel;
 import org.opsli.common.annotation.LoginCrypto;
 import org.opsli.common.annotation.Limiter;
 import org.opsli.common.enums.DictType;
@@ -40,6 +41,7 @@ import org.opsli.common.utils.IPUtil;
 import org.opsli.core.msg.TokenMsg;
 import org.opsli.core.utils.*;
 import org.opsli.modulars.system.login.entity.LoginForm;
+import org.opsli.modulars.system.user.service.IUserRoleRefService;
 import org.opsli.modulars.system.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +70,9 @@ public class LoginRestController {
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private IUserRoleRefService iUserRoleRefService;
 
     /**
      * 登录 登录数据加密
@@ -167,6 +172,98 @@ public class LoginRestController {
                 String clientIpAddress = IPUtil.getClientIdBySingle(request);
                 user.setLoginIp(clientIpAddress);
                 iUserService.updateLoginIp(user);
+            });
+            normalExecutor.execute();
+        }
+        return resultVo;
+    }
+
+
+    /**
+     * 登录 登录数据加密
+     */
+    @Limiter
+    @ApiOperation(value = "注册", notes = "注册")
+    @PostMapping("/system/register")
+    public ResultVo<UserTokenUtil.TokenRet> register(@RequestBody LoginForm form, HttpServletRequest request){
+
+        System.out.println(form);
+        // 非空验证
+        if(form == null){
+            throw new TokenException(TokenMsg.EXCEPTION_LOGIN_NULL);
+        }
+
+
+        CaptchaUtil.validate(form.getUuid(), form.getCaptcha());
+
+        UserModel user = new UserModel();
+
+        user.setUsername(form.getUsername());
+
+        user.setPassword(form.getPassword());
+
+        user.setRealName(form.getUsername());
+
+        user.setNo(form.getUsername());
+
+        System.out.println(user);
+
+
+        UserModel newUser = iUserService.insert(user);
+
+        System.out.println("注册成功，用户ID：" + newUser.getId());
+
+        // 如果不是超级管理员 并且不是系统系统用户 则进行验证
+        if(!StringUtils.equals(UserUtil.SUPER_ADMIN, newUser.getUsername()) &&
+                !TenantUtil.SUPER_ADMIN_TENANT_ID.equals(newUser.getTenantId())
+        ){
+
+            // 账号锁定验证
+            if(StringUtils.isEmpty(newUser.getEnable()) ||
+                    DictType.NO_YES_NO.getValue().equals(newUser.getEnable())){
+                // 账号已被锁定,请联系管理员
+                throw new TokenException(TokenMsg.EXCEPTION_LOGIN_ACCOUNT_LOCKED);
+            }
+
+            // 验证租户是否生效
+            TenantModel tenant = TenantUtil.getTenant(newUser.getTenantId());
+            if(tenant == null){
+                throw new TokenException(TokenMsg.EXCEPTION_LOGIN_TENANT_NOT_USABLE);
+            }
+
+            // 检测用户是否有角色
+            List<String> roleModelList = UserUtil.getUserRolesByUserId(newUser.getId());
+            if(CollUtil.isEmpty(roleModelList)){
+                // 用户暂无角色，请设置后登录
+                throw new TokenException(TokenMsg.EXCEPTION_USER_ROLE_NOT_NULL);
+            }
+
+            // 检测用户是否有角色菜单
+            List<MenuModel> menuModelList = UserUtil.getMenuListByUserId(newUser.getId());
+            if(CollUtil.isEmpty(menuModelList)){
+                // 用户暂无角色菜单，请设置后登录
+                throw new TokenException(TokenMsg.EXCEPTION_USER_MENU_NOT_NULL);
+            }
+
+            // 检测用户是否有角色权限
+            List<String> userAllPermsList = UserUtil.getUserAllPermsByUserId(newUser.getId());
+            if(CollUtil.isEmpty(userAllPermsList)){
+                // 用户暂无角色菜单，请设置后登录
+                throw new TokenException(TokenMsg.EXCEPTION_USER_PERMS_NOT_NULL);
+            }
+        }
+
+
+        //生成token，并保存到Redis
+        ResultVo<UserTokenUtil.TokenRet> resultVo = UserTokenUtil.createToken(newUser);
+        if(resultVo.isSuccess()){
+            AsyncProcessExecutor normalExecutor = AsyncProcessExecutorFactory.createNormalExecutor();
+            // 异步保存IP
+            normalExecutor.put(()->{
+                // 保存用户最后登录IP
+                String clientIpAddress = IPUtil.getClientIdBySingle(request);
+                newUser.setLoginIp(clientIpAddress);
+                iUserService.updateLoginIp(newUser);
             });
             normalExecutor.execute();
         }

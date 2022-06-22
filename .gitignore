@@ -35,3 +35,5 @@ build/
 /git-push.sh
 /app-log/
 /app-opsli-log/
+/var/
+/var/files/

@@ -156,6 +156,22 @@ public interface SysApplyRestApi {
     ResultVo<?> uploadFile(MultipartHttpServletRequest request);
 
     /**
+     * 申请表 上传其他证明文件
+
+     * @return ResultVo
+     */
+    @PostMapping("/uploadOtherFile")
+    ResultVo<?> uploadOtherFile(MultipartHttpServletRequest request);
+
+    /**
+     * 申请表 上传签字盖章后的文件
+
+     * @return ResultVo
+     */
+    @PostMapping("/uploadCompletedFile")
+    ResultVo<?> uploadCompletedFile(MultipartHttpServletRequest request);
+
+    /**
     * 申请表 Excel 导出
     *
     * 导出时，Token认证和方法权限认证 全部都由自定义完成

@@ -81,11 +81,105 @@ public class SysApply extends BaseEntity {
     /** 成果应用情况 */
     private String application;
 
+    /** 第一作者 */
+    private String firstAuthor;
+
+    /** 第一作者性别 */
+    private String firstAuthorSex;
+
+    /** 第一作者出生 */
+    private String firstAuthorBirth;
+
+    /** 第一作者身份证 */
+    private String firstAuthorId;
+
+    /** 第一作者地域 */
+    private String firstAuthorRegion;
+
+    /** 第一作者工作单位 */
+    private String firstAuthorWorkplace;
+
+    /** 第一作者邮箱 */
+    private String firstAuthorMail;
+
+    /** 第一作者手机号 */
+    private String firstAuthorTel;
+
+    /** 第一作者职务 */
+    private String firstAuthorPost;
+
+    /** 第一作者职称 */
+    private String firstAuthorTitle;
+
+    /** 第一作者行政级别 */
+    private String firstAuthorAdminLevel;
+
+    /** 第一作者职称级别 */
+    private String firstAuthorTitleLevel;
+
+    /** 第一作者学历*/
+    private String firstAuthorEdu;
+
+    /** 第一作者学位*/
+    private String firstAuthorDegree;
+
+     /** 第一作者专业*/
+    private String firstAuthorProfess;
+
+    /** 第一作者邮编*/
+    private String firstAuthorCode;
+
+    /** 第一作者地址*/
+    private String firstAuthorAddress;
+
+    /** 第一作者毕业学校*/
+    private String firstAuthorSchool;
+
+    /** 第一作者简介 */
+    private String firstAuthorIntro;
+
+
     /** 文件存储地址 */
     private String filePath;
 
     /** 奖项 */
     private String prize;
+
+    /** 论文发表刊物名称 */
+    private String publicationName;
+
+    /** 刊物影响因子 */
+    private String impactFactor;
+
+    /** 检索收录情况 */
+    private String retrieval;
+
+    /** 被引用次数 */
+    private String citations;
+
+    /** 论文类型 */
+    private String paperType;
+
+    /** 相关系列成果 */
+    private String relatedAchievements;
+
+    /** 产生该成果的项目名称 */
+    private String projectName;
+
+    /** 项目级别 */
+    private String projectLevel;
+
+    /** 自主创新情况 */
+    private String projectInnovation;
+
+    /** word导出路径 */
+    private String wordPath;
+
+    /** 其他证明材料路径 */
+    private String otherFilePath;
+
+    /** 已完成材料存储路径 */
+    private String completedFilePath;
 
     // ========================================
 

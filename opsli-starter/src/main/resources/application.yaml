@@ -173,6 +173,7 @@ opsli:
       effective-time: 120
       # 排除过滤URL
       url-exclusion:
+        - "/system/register"
         - "/static/files/**"
         - "/files/**"
         - "/test.html"

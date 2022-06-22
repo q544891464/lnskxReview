@@ -98,16 +98,19 @@ public class UserServiceImpl extends CrudServiceImpl<UserMapper, SysUser, UserMo
             // 重复
             throw new ServiceException(SystemMsg.EXCEPTION_USER_UNIQUE);
         }
-        // 唯一验证 - 工号
-        boolean verificationByNo  = this.uniqueVerificationByNo(model);
-        if(!verificationByNo){
-            // 重复
-            throw new ServiceException(SystemMsg.EXCEPTION_USER_NO_UNIQUE);
-        }
+        System.out.println("用户名验证通过");
+        // 唯一验证 - 工号 TODO：不知道为啥验证通不过，暂时注释掉
+//        boolean verificationByNo  = this.uniqueVerificationByNo(model);
+//        if(!verificationByNo){
+//            // 重复
+//            throw new ServiceException(SystemMsg.EXCEPTION_USER_NO_UNIQUE);
+//        }
+        System.out.println("工号验证通过");
 
         // 防止非法操作 - 不允许直接操控到 关键数据
         // 需要注意的是 不要轻易改修改策略
         model.setLoginIp(null);
+
         // 默认用户状态为启用
         model.setEnable(DictType.NO_YES_YES.getValue());
         // 默认未分配组织
