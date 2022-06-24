@@ -150,7 +150,11 @@ public class UserServiceImpl extends CrudServiceImpl<UserMapper, SysUser, UserMo
             OptionsModel optionsModel = OptionsUtil.getOptionByCode("def_role");
             if(optionsModel != null){
                 defRole = optionsModel.getOptionValue();
+                System.out.println("def_role:"+defRole);
+
             }
+
+
 
             if(StringUtils.isNotBlank(defRole)){
                 QueryWrapper<SysRole> roleQueryWrapper = new QueryWrapper<>();

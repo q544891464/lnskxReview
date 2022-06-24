@@ -181,6 +181,42 @@ public class SysApply extends BaseEntity {
     /** 已完成材料存储路径 */
     private String completedFilePath;
 
+    /** 第二作者 */
+    private String author2;
+
+    /** 第二作者 */
+    private String author2Sex;
+
+    /** 第二作者 */
+    private String author2Workplace;
+
+    /** 第二作者 */
+    private String author2Tel;
+
+    /** 第三作者 */
+    private String author3;
+
+    /** 第三作者 */
+    private String author3Sex;
+
+    /** 第三作者 */
+    private String author3Workplace;
+
+    /** 第三作者 */
+    private String author3Tel;
+
+    /** 第四作者 */
+    private String author4;
+
+    /** 第四作者 */
+    private String author4Sex;
+
+    /** 第四作者 */
+    private String author4Workplace;
+
+    /** 第四作者 */
+    private String author4Tel;
+
     // ========================================
 
 

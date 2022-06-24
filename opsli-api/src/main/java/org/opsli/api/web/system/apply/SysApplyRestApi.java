@@ -54,6 +54,20 @@ public interface SysApplyRestApi {
     ResultVo<SysApplyModel> get(SysApplyModel model);
 
     /**
+     * 申请表 查询分页
+     * @param pageNo 当前页
+     * @param pageSize 每页条数
+     * @param request request
+     * @return ResultVo
+     */
+    @GetMapping("/findPageAll")
+    ResultVo<?> findPageAll(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            HttpServletRequest request
+    );
+
+    /**
     * 申请表 查询分页
     * @param pageNo 当前页
     * @param pageSize 每页条数

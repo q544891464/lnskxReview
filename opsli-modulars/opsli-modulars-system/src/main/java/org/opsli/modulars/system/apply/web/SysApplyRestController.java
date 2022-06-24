@@ -124,6 +124,31 @@ public class SysApplyRestController extends BaseRestController<SysApply, SysAppl
         return ResultVo.success(page.getPageData());
     }
 
+
+    /**
+     * 申请表 查询全部分页
+     * @param pageNo 当前页
+     * @param pageSize 每页条数
+     * @param request request
+     * @return ResultVo
+     */
+    @ApiOperation(value = "获得全部分页数据", notes = "获得全部分页数据 - 查询构造器")
+    @RequiresPermissions("system_apply_select")
+    @Override
+    public ResultVo<?> findPageAll(Integer pageNo, Integer pageSize, HttpServletRequest request) {
+
+
+        QueryBuilder<SysApply> queryBuilder = new WebQueryBuilder<>(entityClazz, request.getParameterMap());
+        Page<SysApply, SysApplyModel> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<SysApply> queryWrapper = queryBuilder.build();
+
+
+        page.setQueryWrapper(queryWrapper);
+        page = IService.findPage(page);
+
+        return ResultVo.success(page.getPageData());
+    }
+
     /**
      * 申请表 根据所在组织查询分页 一般只能组织特定角色才能查看
      * @param pageNo 当前页

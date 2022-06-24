@@ -345,6 +345,78 @@ public class SysApplyModel extends ApiWrapper {
     @ExcelInfo
     private String prize;
 
+    /** 第二作者 */
+    @ApiModelProperty(value = "第二作者")
+    @ExcelProperty(value = "第二作者", order = 22)
+    @ExcelIgnore
+    private String author2;
+
+    /** 第二作者 */
+    @ApiModelProperty(value = "第二作者")
+    @ExcelProperty(value = "第二作者", order = 22)
+    @ExcelIgnore
+    private String author2Sex;
+
+    /** 第二作者 */
+    @ApiModelProperty(value = "第二作者")
+    @ExcelProperty(value = "第二作者", order = 22)
+    @ExcelIgnore
+    private String author2Workplace;
+
+    /** 第二作者 */
+    @ApiModelProperty(value = "第二作者")
+    @ExcelProperty(value = "第二作者", order = 22)
+    @ExcelIgnore
+    private String author2Tel;
+
+    /** 第三作者 */
+    @ApiModelProperty(value = "第三作者")
+    @ExcelProperty(value = "第三作者", order = 22)
+    @ExcelIgnore
+    private String author3;
+
+    /** 第三作者 */
+    @ApiModelProperty(value = "第三作者")
+    @ExcelProperty(value = "第三作者", order = 22)
+    @ExcelIgnore
+    private String author3Sex;
+
+    /** 第三作者 */
+    @ApiModelProperty(value = "第三作者")
+    @ExcelProperty(value = "第三作者", order = 22)
+    @ExcelIgnore
+    private String author3Workplace;
+
+    /** 第三作者 */
+    @ApiModelProperty(value = "第三作者")
+    @ExcelProperty(value = "第三作者", order = 22)
+    @ExcelIgnore
+    private String author3Tel;
+
+    /** 第四作者 */
+    @ApiModelProperty(value = "第四作者")
+    @ExcelProperty(value = "第四作者", order = 22)
+    @ExcelIgnore
+    private String author4;
+
+    /** 第四作者 */
+    @ApiModelProperty(value = "第四作者")
+    @ExcelProperty(value = "第四作者", order = 22)
+    @ExcelIgnore
+    private String author4Sex;
+
+    /** 第四作者 */
+    @ApiModelProperty(value = "第四作者")
+    @ExcelProperty(value = "第四作者", order = 22)
+    @ExcelIgnore
+    private String author4Workplace;
+
+    /** 第四作者 */
+    @ApiModelProperty(value = "第四作者")
+    @ExcelProperty(value = "第四作者", order = 22)
+    @ExcelIgnore
+    private String author4Tel;
+
 
 
 

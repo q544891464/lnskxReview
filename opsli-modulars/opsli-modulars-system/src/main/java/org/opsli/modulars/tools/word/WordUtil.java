@@ -68,7 +68,20 @@ public class WordUtil {
         data.put("firstAuthorMail", model.getFirstAuthorMail());
         data.put("firstAuthorTel", model.getFirstAuthorTel());
         data.put("firstAuthorAddress",model.getFirstAuthorAddress());
+        data.put("firstAuthorCode",model.getFirstAuthorCode());
         data.put("firstAuthorIntro", model.getFirstAuthorIntro());
+        data.put("author2", model.getAuthor2());
+        data.put("author2Sex", model.getAuthor2Sex());
+        data.put("author2Workplace", model.getAuthor2Workplace());
+        data.put("author2Tel", model.getAuthor2Tel());
+        data.put("author3", model.getAuthor3());
+        data.put("author3Sex", model.getAuthor3Sex());
+        data.put("author3Workplace", model.getAuthor3Workplace());
+        data.put("author3Tel", model.getAuthor3Tel());
+        data.put("author4", model.getAuthor4());
+        data.put("author4Sex", model.getAuthor4Sex());
+        data.put("author4Workplace", model.getAuthor4Workplace());
+        data.put("author4Tel", model.getAuthor4Tel());
         data.put("introduction", model.getIntroduction());
         data.put("publicationName", model.getPublicationName());
         data.put("impactFactor", model.getImpactFactor());
@@ -84,19 +97,25 @@ public class WordUtil {
 
         OptionsModel option = OptionsUtil.getOptionByCode("storage_local_domain");
 
-
-        XWPFTemplate template = XWPFTemplate.compile("opsli-starter/src/main/resources/resources/论文评奖模板.docx")
+        String path = "/www/wwwroot/opsliboot/static";
+//        XWPFTemplate template = XWPFTemplate.compile("opsli-starter/src/main/resources/resources/论文评奖模板.docx")
+//                .render(data);
+        XWPFTemplate template = XWPFTemplate.compile(path+"/论文评奖模板.docx")
                 .render(data);
         FileOutputStream out;
         String filename = model.getApplyName() + ".docx";
-        out = new FileOutputStream("opsli-starter/src/main/resources/resources/"+filename);
+//        out = new FileOutputStream("opsli-starter/src/main/resources/resources/"+filename);
+        out = new FileOutputStream(path+"/"+filename);
+
         template.write(out);
         out.flush();
 
         out.close();
         template.close();
         try {
-            File file = new File("opsli-starter/src/main/resources/resources/"+filename);
+//            File file = new File("opsli-starter/src/main/resources/resources/"+filename);
+            File file = new File(path+"/"+filename);
+
             InputStream in = new FileInputStream(file);
 
             OssStorageService ossStorageService = OssStorageFactory.INSTANCE.getHandle();
